@@ -1006,6 +1006,87 @@ void ofxTouchGUI::saveSettings() {
 }
 
 
+// JSON
+
+ofxJSONElement ofxTouchGUI::getSettingsJSON() {
+
+	    
+    for(int i = 0; i < numGuiItems; i++) {
+		ofxTouchGUIBase *item = guiItems[i];
+
+		//cout << "type: " << item->type << "  id: " << item->itemId << "  label: " << item->getLabel() 
+		//	<< "  oscLabel: " << item->fullOscAddress << endl;
+
+
+		cout << "item type: " << item->type << endl;
+
+		 if(item->type == TOGGLE_TYPE) {
+            
+			const ofxTouchGUIToggleButton* controller = (const ofxTouchGUIToggleButton*)getItemByLabelAndType(item->getLabel(), item->type);
+            if(controller) {
+				cout << "type: " << item->type << " address: " << item->fullOscAddress << " value: " << controller->toggleVal << endl;
+            }
+        }        
+        else if(item->type == SLIDER_TYPE) {
+            
+            //const ofxTouchGUISlider* controller = (const ofxTouchGUISlider*)getItemById(controlItemId);
+			const ofxTouchGUISlider* controller = (const ofxTouchGUISlider*)getItemByLabelAndType(item->getLabel(),item->type);
+            if(controller) {
+                if(controller->useInteger == true) {
+					cout << "type: " << item->type << " address: " << item->fullOscAddress << " value: " << controller->intVal << endl;
+                }
+                else {
+                    cout << "type: " << item->type << " address: " << item->fullOscAddress << " value: " << controller->val << endl;
+                }   
+            }
+            
+        }
+        else if(item->type == DROPDOWN_TYPE) {
+            
+            //const ofxTouchGUIDropDown* controller = (const ofxTouchGUIDropDown*)getItemById(controlItemId);
+			const ofxTouchGUIDropDown* controller = (const ofxTouchGUIDropDown*)getItemByLabelAndType(item->getLabel(),item->type);
+            if(controller) {
+				cout << "type: " << item->type << " address: " << item->fullOscAddress << " value: " << controller->selectId << endl;
+            }            
+        }
+        else if(item->type == TEXTINPUT_TYPE) {
+            
+			const ofxTouchGUITextInput* controller = (const ofxTouchGUITextInput*)getItemByLabelAndType(item->getLabel(),item->type);
+            if(controller) {
+				cout << "type: " << item->type << " address: " << item->fullOscAddress << " value: " << controller->input << endl;
+            }            
+        }
+        else if(item->type == VAR_TYPE) {
+            //NameValuePair nvp;
+            //= {varName, (void*)regVar};
+            //varItems.push_back(nvp);
+			cout << "var_type" << endl;
+			const TGNameValuePair* var = (const TGNameValuePair*)getVarByLabel(item->getLabel());
+            if(var) {
+                
+                if(var->type == _STRING) {
+					cout << "type: " << item->type << " address: " << item->fullOscAddress << " value: " << *(string*)var->value << endl;
+                    XML.setValue("value", *(string*)var->value, 0);
+                } else if(var->type == _INT) {
+					cout << "type: " << item->type << " address: " << item->fullOscAddress << " value: " << *(int*)var->value << endl;
+                    XML.setValue("value", *(int*)var->value, 0);
+                } else if(var->type == _FLOAT) {
+					cout << "type: " << item->type << " address: " << item->fullOscAddress << " value: " << *(float*)var->value << endl;
+                    XML.setValue("value", *(float*)var->value, 0);
+                } else if(var->type == _BOOL) {
+                    cout << "type: " << item->type << " address: " << item->fullOscAddress << " value: " << *(bool*)var->value << endl;
+                }
+            }  
+		}
+
+		
+    }
+    
+    ofLogVerbose() << "Resetting defaults";
+	return ofxJSONElement(ofxJSONElement::Value(1));
+}
+
+
 // SAVE INDIVIDUAL SETTINGS - saves the controller: T param must be int,float or bool
 template <typename T>
 bool ofxTouchGUI::saveControl(string currentType, string currentLabel, T* currentValue, bool overwriteXMLValue)

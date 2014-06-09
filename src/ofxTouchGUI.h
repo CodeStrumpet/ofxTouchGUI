@@ -12,6 +12,7 @@
 #include "ofxXmlSettings.h"
 #include "ofxOsc.h"
 #include "ofxTouchGUIEventArgs.h"
+#include "ofxJSONElement.h"
 
 
 /*
@@ -230,6 +231,9 @@ public:
     // save settings xml
     void saveSettings();
     void resetDefaultValues();
+
+	// get JSON
+	ofxJSONElement getSettingsJSON();
     
     
     // using a template to pass in parameter of any type

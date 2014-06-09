@@ -531,6 +531,7 @@ void ofxTouchGUIBase::enableSendOSC(ofxOscSender * oscSender) {
     }
 }
 
+
 void ofxTouchGUIBase::disableSendOSC() {
     
     if(oscEnabled) {
