@@ -76,6 +76,12 @@
 #define VAR_TYPE "variable"
 
 
+// gui JSON keys
+#define TYPE_KEY "type"
+#define ADDRESS_KEY "address"
+#define VALUE_KEY "value"
+
+
 
 
 // gui item value types

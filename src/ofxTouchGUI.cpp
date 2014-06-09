@@ -1010,9 +1010,11 @@ void ofxTouchGUI::saveSettings() {
 
 ofxJSONElement ofxTouchGUI::getSettingsJSON() {
 
-	    
+	ofxJSONElement settingsArray = ofxJSONElement::Value(Json::arrayValue);
     for(int i = 0; i < numGuiItems; i++) {
 		ofxTouchGUIBase *item = guiItems[i];
+
+		ofxJSONElement element = ofxJSONElement::Value(Json::objectValue);
 
 		//cout << "type: " << item->type << "  id: " << item->itemId << "  label: " << item->getLabel() 
 		//	<< "  oscLabel: " << item->fullOscAddress << endl;
@@ -1025,7 +1027,11 @@ ofxJSONElement ofxTouchGUI::getSettingsJSON() {
 			const ofxTouchGUIToggleButton* controller = (const ofxTouchGUIToggleButton*)getItemByLabelAndType(item->getLabel(), item->type);
             if(controller) {
 				cout << "type: " << item->type << " address: " << item->fullOscAddress << " value: " << controller->toggleVal << endl;
-            }
+				element[TYPE_KEY] = item->type;
+				element[ADDRESS_KEY] = item->fullOscAddress;
+				element[VALUE_KEY] = ofxJSONElement::Value(*controller->toggleVal);
+
+			}
         }        
         else if(item->type == SLIDER_TYPE) {
             
@@ -1034,10 +1040,16 @@ ofxJSONElement ofxTouchGUI::getSettingsJSON() {
             if(controller) {
                 if(controller->useInteger == true) {
 					cout << "type: " << item->type << " address: " << item->fullOscAddress << " value: " << controller->intVal << endl;
-                }
+					element[TYPE_KEY] = item->type;
+					element[ADDRESS_KEY] = item->fullOscAddress;
+					element[VALUE_KEY] = ofxJSONElement::Value(*controller->intVal);
+				}
                 else {
                     cout << "type: " << item->type << " address: " << item->fullOscAddress << " value: " << controller->val << endl;
-                }   
+					element[TYPE_KEY] = item->type;
+					element[ADDRESS_KEY] = item->fullOscAddress;
+					element[VALUE_KEY] = ofxJSONElement::Value(*controller->val);
+				}   
             }
             
         }
@@ -1047,14 +1059,20 @@ ofxJSONElement ofxTouchGUI::getSettingsJSON() {
 			const ofxTouchGUIDropDown* controller = (const ofxTouchGUIDropDown*)getItemByLabelAndType(item->getLabel(),item->type);
             if(controller) {
 				cout << "type: " << item->type << " address: " << item->fullOscAddress << " value: " << controller->selectId << endl;
-            }            
+				element[TYPE_KEY] = item->type;
+				element[ADDRESS_KEY] = item->fullOscAddress;
+				element[VALUE_KEY] = ofxJSONElement::Value(*controller->selectId);
+			}            
         }
         else if(item->type == TEXTINPUT_TYPE) {
             
 			const ofxTouchGUITextInput* controller = (const ofxTouchGUITextInput*)getItemByLabelAndType(item->getLabel(),item->type);
             if(controller) {
 				cout << "type: " << item->type << " address: " << item->fullOscAddress << " value: " << controller->input << endl;
-            }            
+				element[TYPE_KEY] = item->type;
+				element[ADDRESS_KEY] = item->fullOscAddress;
+				element[VALUE_KEY] = ofxJSONElement::Value(*controller->input);
+			}            
         }
         else if(item->type == VAR_TYPE) {
             //NameValuePair nvp;
@@ -1077,12 +1095,17 @@ ofxJSONElement ofxTouchGUI::getSettingsJSON() {
                     cout << "type: " << item->type << " address: " << item->fullOscAddress << " value: " << *(bool*)var->value << endl;
                 }
             }  
-		}
 
+		}
+		if (!element.empty()) {
+			cout << "element not empty" << endl;
+			settingsArray.append(element);
+		}
 		
     }
     
-    ofLogVerbose() << "Resetting defaults";
+	settingsArray.save("gui_settings.json", true);
+
 	return ofxJSONElement(ofxJSONElement::Value(1));
 }
 
